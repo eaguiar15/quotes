@@ -15,8 +15,7 @@ function load(){
         if ( ws.readyState == 4 && ws.status == 200 ) {
             let resp = JSON.parse(ws.responseText);
             if(resp.status == 1){
-                json = JSON.parse(ws.responseText);
-                json = json.game;
+                json = JSON.parse(ws.responseText).game;
                 init();
             }
         }
@@ -70,7 +69,7 @@ function init(){
 
 function insertRow(tr,id,text){
     tr.innerHTML+=
-    "<td><span>" + text + "</span></td> " +
+    "<td><span>" + decode(text) + "</span></td> " +
     "<td>" + 
     "    <div class='icon'>" +
     "        <i class='fab fa-instagram'></i>" +
@@ -89,6 +88,14 @@ function copy(id) {
     inputElement.select();
     document.execCommand('copy');
     document.body.removeChild(inputElement);
+}
+
+function decode(value){
+     value = value.replace("u00e9","é");
+     value = value.replace("u00e3","ã");
+     value = value.replace("u00e7","ç");
+
+     return value;
 }
 
 
