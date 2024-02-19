@@ -25,9 +25,16 @@ function load(){
 
 function save(){
     initWS("games.php?p=update","POST"); 
-    ws.onreadystatechange = function(){
+    ws.onreadystatechange = function(){ 
         if ( ws.readyState == 4 && ws.status == 200 ) {
-            console.log(ws.responseText);
+            let resp = JSON.parse(ws.responseText);
+            if(resp.status == 1){
+                document.getElementById('icon-save').style.color = 'orange'; 
+                setTimeout(function() {
+                    document.getElementById('icon-save').style.color = 'white'; 
+            }, 1000);
+            }
+            
         }
     }
     ws.send(JSON.stringify({idGame : 27, game : json}));
@@ -48,6 +55,8 @@ function edit(id,elem){
 
 function add(){
     text =  prompt("Digite a nova frase:");
+    text =  text.replace(/"/g,'');
+
     var maxId= json.reduce(function(objetoMax, objetoAtual) {
         return objetoAtual.id > objetoMax.id ? objetoAtual : objetoMax;
     });
@@ -58,10 +67,24 @@ function add(){
     insertRow(tr,obj.id,obj.text);
 }
 
+function search(){
+    table = document.getElementById("table");
+    text =  prompt("Digite palavra chave para pesquisa:").toLowerCase();
+    for(let a = 0 ; a < table.rows.length; a ++){
+        aux = table.rows[a].cells[0].innerText;
+        if(aux.includes(text)){
+            table.rows[a].style.display = "";
+        }else{
+            table.rows[a].style.display = "none";
+        }
+       
+    }
+}
+
 function init(){
 
     table = document.getElementById("table");
-    for(let a in json){
+    for (let a = json.length - 1; a >= 0; a--) {
         let tr = table.insertRow();
         insertRow(tr,json[a].id,json[a].text);
     }
@@ -91,12 +114,30 @@ function copy(id) {
 }
 
 function decode(value){
-     value = value.replace("u00e9","é");
-     value = value.replace("u00e3","ã");
-     value = value.replace("u00e7","ç");
+     value = value.replace(/u00e9/g,"é");
+     value = value.replace(/u00e3/g,"ã");
+     value = value.replace(/u00e7/g,"ç");
+     value = value.replace(/u00ea/g,"ê");
+     value = value.replace(/u00f3/g,"ó");
+     value = value.replace(/u00e1/g,"á");
 
      return value;
 }
+
+document.addEventListener('keydown', function(event) {
+    if (event.ctrlKey && event.key === 's') {
+      event.preventDefault(); // Impede que o navegador execute sua função padrão
+      save(); // Chama a função salvar
+    }
+    if (event.ctrlKey && event.key === 'a') {
+      event.preventDefault(); 
+      add(); 
+    }
+    if (event.ctrlKey && event.key === 'l') {
+      event.preventDefault(); 
+      search(); 
+    }
+  });
 
 
 load();
