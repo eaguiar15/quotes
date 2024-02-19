@@ -120,6 +120,8 @@ function decode(value){
      value = value.replace(/u00ea/g,"ê");
      value = value.replace(/u00f3/g,"ó");
      value = value.replace(/u00e1/g,"á");
+     value = value.replace(/u00ed/g,"í");
+     value = value.replace(/u00e0/g,"à");
 
      return value;
 }
